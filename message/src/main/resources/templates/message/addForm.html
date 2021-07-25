@@ -15,7 +15,7 @@
 <div class="container">
 
   <div class="py-5 text-center">
-    <h2 c>상품 등록</h2>
+    <h2 th:text="#{page.addItem}">상품 등록</h2>
   </div>
 
   <form action="item.html" th:action th:object="${item}" method="post">
@@ -36,7 +36,7 @@
 
     <div class="row">
       <div class="col">
-        <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.save}">상품 등록</button>
+        <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{page.addItem}">상품 등록</button>
       </div>
       <div class="col">
         <button class="w-100 btn btn-secondary btn-lg"
