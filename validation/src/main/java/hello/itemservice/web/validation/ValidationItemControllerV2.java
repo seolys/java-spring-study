@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -81,7 +80,6 @@ public class ValidationItemControllerV2 {
 		// 검증에 실패하면 다시 입력 폼으로
 		if (bindingResult.hasErrors()) { // 부정의 부정은 읽기가 어려우니 리팩토링하라는 조언.
 			log.info("errors={}", bindingResult);
-			model.addAttribute("bindingResult", bindingResult);
 			return "validation/v2/addForm";
 		}
 
@@ -124,7 +122,6 @@ public class ValidationItemControllerV2 {
 		// 검증에 실패하면 다시 입력 폼으로
 		if (bindingResult.hasErrors()) { // 부정의 부정은 읽기가 어려우니 리팩토링하라는 조언.
 			log.info("errors={}", bindingResult);
-			model.addAttribute("bindingResult", bindingResult);
 			return "validation/v2/addForm";
 		}
 
@@ -170,7 +167,6 @@ public class ValidationItemControllerV2 {
 		// 검증에 실패하면 다시 입력 폼으로
 		if (bindingResult.hasErrors()) { // 부정의 부정은 읽기가 어려우니 리팩토링하라는 조언.
 			log.info("errors={}", bindingResult);
-			model.addAttribute("bindingResult", bindingResult);
 			return "validation/v2/addForm";
 		}
 
@@ -192,12 +188,18 @@ public class ValidationItemControllerV2 {
 	 */
 	@PostMapping("/add")
 	public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+		// 바인딩 에러가 있는경우 검증로직은 SKIP
+		if (bindingResult.hasErrors()) {
+			log.info("errors={}", bindingResult);
+			return "validation/v2/addForm";
+		}
+
 		log.info("objectName={}", bindingResult.getObjectName());
 		log.info("target={}", bindingResult.getTarget());
 
 		// 검증 로직
-		ValidationUtils.rejectIfEmpty(bindingResult, "itemName", "required");
-		ValidationUtils.rejectIfEmptyOrWhitespace(bindingResult, "itemName", "required");
+//		ValidationUtils.rejectIfEmptyOrWhitespace(bindingResult, "itemName", "required");
+//		ValidationUtils.rejectIfEmpty(bindingResult, "itemName", "required");
 		if (!StringUtils.hasText(item.getItemName())) {
 			bindingResult.rejectValue("itemName", "required");
 		}
@@ -219,7 +221,6 @@ public class ValidationItemControllerV2 {
 		// 검증에 실패하면 다시 입력 폼으로
 		if (bindingResult.hasErrors()) { // 부정의 부정은 읽기가 어려우니 리팩토링하라는 조언.
 			log.info("errors={}", bindingResult);
-			model.addAttribute("bindingResult", bindingResult);
 			return "validation/v2/addForm";
 		}
 
