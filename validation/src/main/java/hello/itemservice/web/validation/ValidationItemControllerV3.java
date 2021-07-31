@@ -9,9 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,12 +23,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ValidationItemControllerV3 {
 
 	private final ItemRepository itemRepository;
-	private final ItemValidator itemValidator;
-
-	@InitBinder
-	public void init(WebDataBinder dataBinder) {
-		dataBinder.addValidators(itemValidator);
-	}
 
 	@GetMapping
 	public String items(Model model) {
@@ -80,7 +72,7 @@ public class ValidationItemControllerV3 {
 	}
 
 	@PostMapping("/{itemId}/edit")
-	public String edit(@PathVariable Long itemId, @ModelAttribute Item item) {
+	public String edit(@Validated @PathVariable Long itemId, @ModelAttribute Item item) {
 		itemRepository.update(itemId, item);
 		return "redirect:/validation/v3/items/{itemId}";
 	}
