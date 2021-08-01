@@ -55,6 +55,8 @@ public class ValidationItemControllerV4 {
 	 */
 	@PostMapping("/add")
 	public String addItem(@Validated @ModelAttribute("item") ItemSaveForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+//	public String addItem(@Validated @ModelAttribute("item") ItemSaveForm form, RedirectAttributes redirectAttributes) {
+		log.info("addItem 호출!!");
 		// 특정 필드가 아닌 복합 룰 검증
 		if (Objects.nonNull(form.getPrice()) && Objects.nonNull(form.getQuantity())) {
 			int resultPrice = form.getPrice() * form.getQuantity();
