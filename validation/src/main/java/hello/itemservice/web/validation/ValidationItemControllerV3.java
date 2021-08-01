@@ -3,6 +3,8 @@ package hello.itemservice.web.validation;
 import hello.itemservice.domain.item.Item;
 import hello.itemservice.domain.item.ItemRepository;
 import java.util.List;
+import java.util.Objects;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -52,6 +54,14 @@ public class ValidationItemControllerV3 {
 	 */
 	@PostMapping("/add")
 	public String addItem(@Validated @ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+		// 특정 필드가 아닌 복합 룰 검증
+		if (Objects.nonNull(item.getPrice()) && Objects.nonNull(item.getQuantity())) {
+			int resultPrice = item.getPrice() * item.getQuantity();
+			if (resultPrice < 10000) {
+				bindingResult.reject("totalPriceMin", new Object[]{"10,000", resultPrice}, null);
+			}
+		}
+
 		// 검증에 실패하면 다시 입력 폼으로
 		if (bindingResult.hasErrors()) { // 부정의 부정은 읽기가 어려우니 리팩토링하라는 조언.
 			log.info("errors={}", bindingResult);
@@ -72,7 +82,21 @@ public class ValidationItemControllerV3 {
 	}
 
 	@PostMapping("/{itemId}/edit")
-	public String edit(@Validated @PathVariable Long itemId, @ModelAttribute Item item) {
+	public String edit(@NotNull @PathVariable Long itemId, @Validated @ModelAttribute Item item, BindingResult bindingResult) {
+		// 특정 필드가 아닌 복합 룰 검증
+		if (Objects.nonNull(item.getPrice()) && Objects.nonNull(item.getQuantity())) {
+			int resultPrice = item.getPrice() * item.getQuantity();
+			if (resultPrice < 10000) {
+				bindingResult.reject("totalPriceMin", new Object[]{"10,000", resultPrice}, null);
+			}
+		}
+
+		// 검증에 실패하면 다시 입력 폼으로
+		if (bindingResult.hasErrors()) { // 부정의 부정은 읽기가 어려우니 리팩토링하라는 조언.
+			log.info("errors={}", bindingResult);
+			return "validation/v3/editForm";
+		}
+
 		itemRepository.update(itemId, item);
 		return "redirect:/validation/v3/items/{itemId}";
 	}
