@@ -4,6 +4,7 @@ import static java.util.Objects.isNull;
 
 import hello.login.domain.member.Member;
 import hello.login.domain.member.MemberRepository;
+import hello.login.web.argumentresolver.Login;
 import hello.login.web.session.SessionManager;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
@@ -68,8 +69,17 @@ public class HomeController {
 		return "loginHome";
 	}
 
+	//	@GetMapping("/")
+	public String homeLoginV4SessionAttribute(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member, Model model) {
+		if (isNull(member)) {
+			return "home";
+		}
+		model.addAttribute("member", member);
+		return "loginHome";
+	}
+
 	@GetMapping("/")
-	public String homeLoginV4(@SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member member, Model model) {
+	public String homeLoginV5ArgumentResolver(@Login Member member, Model model) {
 		if (isNull(member)) {
 			return "home";
 		}
